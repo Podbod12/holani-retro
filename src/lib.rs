@@ -86,7 +86,7 @@ impl<'a> retro::Core<'a> for LynxCore {
                 if path.is_dir() {
                     path.push("lynxboot.img");
                     if path.exists() {
-                        lynx.load_rom_from_vec(&std::fs::read(path).unwrap().to_vec()).unwrap();
+                        lynx.load_rom_from_slice(&std::fs::read(path).unwrap()).unwrap();
                     }
                 } else {
                     warn!("'{:?}' is not a valid directory.", path);
@@ -95,7 +95,7 @@ impl<'a> retro::Core<'a> for LynxCore {
             Err(_) => warn!("Couldn't get libretro system directory"),
         }
 
-        lynx.load_cart_from_vec(&data).unwrap();
+        lynx.load_cart_from_slice(&data).unwrap();
 
         let rotation = match lynx.rotation() {
             1 => ScreenRotation::TwoSeventyDegrees,
