@@ -1,7 +1,7 @@
 # Holani-retro
 [Libretro](https://www.libretro.com/) implementation of [Holani](https://github.com/LLeny/holani), a cycle-stepped Atari Lynx emulator.
 
-#### Supported Retroarch features
+#### Supported libretro features
 * Save/load states
 
 ## Build
