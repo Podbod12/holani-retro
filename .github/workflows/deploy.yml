@@ -1,0 +1,97 @@
+name: Deploy Workflow
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  build-linux:
+    name: Build Linux
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    container: rust:1.81.0
+    steps:
+      - name: Install clang
+        run: |
+          apt update
+          apt install -yq clang
+      - name: Checkout code from repository
+        uses: actions/checkout@v4
+      - name: Build Base
+        run: cargo build --release  
+      - name: Transform filenames
+        run: |
+          cd target/release
+          mv libholani_retro.so holani_libretro.so
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: holani_retro-linux
+          path: |
+            target/release/holani_libretro.so
+          retention-days: 5
+  build-windows:
+    name: Build Windows
+    timeout-minutes: 30
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code from repository
+        uses: actions/checkout@v4
+      - name: Setup Rust
+        run: |
+          rustup install 1.81.0
+          rustup override set 1.81.0
+          rustup default stable-msvc
+      - name: Build Base
+        run: cargo build --release     
+      - name: Transform filenames
+        run: |
+          cd target/release
+          mv holani_retro.dll holani_libretro.dll
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: holani_retro-windows
+          path: |
+            target/release/holani_libretro.dll
+          retention-days: 5
+  build-mac:
+    name: Build Mac
+    timeout-minutes: 30
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code from repository
+        uses: actions/checkout@v4
+      - name: Setup Rust
+        run: |
+          rustup install 1.81.0
+          rustup override set 1.81.0
+      - name: Build Base
+        run: cargo build --release      
+      - name: Transform filenames
+        run: |
+          cd target/release
+          mv libholani_retro.dylib holani_libretro.dylib
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: holani_retro-mac
+          path: |
+            target/release/holani_libretro.dylib
+          retention-days: 5 
+  release:
+    name: Release
+    needs: [build-linux, build-windows, build-mac]
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            holani_retro-linux/holani_libretro.so
+            holani_retro-windows/holani_libretro.dll
+            holani_retro-mac/holani_libretro.dylib
