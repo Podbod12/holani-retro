@@ -1,0 +1,71 @@
+stages:          
+  - build
+  
+build-linux-x64:   
+  stage: build
+  image: rust:1.81.0-bookworm  
+  tags:
+    - linux    
+  script:
+    - apt update && apt install -yq clang
+    - cargo build --release
+    - cp target/release/libholani_retro.so holani_libretro-linux-x86_64.so
+  artifacts:
+    paths:
+    - holani_libretro-linux-x86_64.so
+
+build-windows-x86_64:   
+  stage: build
+  image: rust:1.81.0-bookworm 
+  tags:
+    - linux
+  script:
+    - apt update && apt install -yq clang gcc-multilib gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 libstdc++6 libc++1 libc++abi-dev libc++abi1 libclang1
+    - rustup target add x86_64-pc-windows-gnu
+    - cargo build --release --target x86_64-pc-windows-gnu
+    - cp target/x86_64-pc-windows-gnu/release/holani_retro.dll holani_libretro-windows-x86_64.dll
+  artifacts:
+    paths:
+    - holani_libretro-windows-x86_64.dll
+
+build-osx-x86_64:   
+  stage: build
+  image: joseluisq/rust-linux-darwin-builder:1.81
+  tags:
+    - linux
+  script:
+    - apt update && apt install -yq clang gcc-multilib llvm-dev libclang-dev cmake build-essential pkg-config
+    - cargo build --release --target x86_64-apple-darwin
+    - cp target/x86_64-apple-darwin/release/libholani_retro.dylib holani_libretro-osx-x86_64.dylib
+  artifacts:
+    paths:
+    - holani_libretro-osx-x86_64.dylib
+
+build-osx-aarch64:   
+  stage: build
+  image: joseluisq/rust-linux-darwin-builder:1.81
+  tags:
+    - linux
+  script:
+    - apt update && apt install -yq clang gcc-multilib llvm-dev libclang-dev cmake build-essential pkg-config
+    - cargo build --release --target aarch64-apple-darwin
+    - cp target/aarch64-apple-darwin/release/libholani_retro.dylib holani_libretro-osx-aarch64.dylib
+  artifacts:
+    paths:
+    - holani_libretro-osx-aarch64.dylib
+
+
+build-arm-linux-android:   
+  stage: build
+  image: instrumentisto/cargo-ndk:latest
+  tags:
+    - linux
+  script:
+    - apt update && apt install -yq clang gcc-multilib
+    - cargo ndk -o ./jniLibs build --release
+    - cp jniLibs/arm64-v8a/libholani_retro.so holani_libretro-android-arm64-v8a.so
+    - cp jniLibs/armeabi-v7a/libholani_retro.so holani_libretro-android-armeabi-v7a.so
+  artifacts:
+    paths:
+    - holani_libretro-android-arm64-v8a.so
+    - holani_libretro-android-armeabi-v7a.so
