@@ -105,12 +105,12 @@ impl<'a> retro::Core<'a> for LynxCore {
         env.set_rotation(rotation).unwrap();
 
         Ok(Self {
-          lynx,
-          last_refresh_rate: DEFAULT_FPS,
-          audio_ticks: 0,
-          rendering_mode,
-          pixel_format,
-          frame_buffer: ArrayFrameBuffer::new([XRGB8888::new_with_raw_value(0); FRAME_BUFFER_LENGTH])
+            lynx,
+            last_refresh_rate: DEFAULT_FPS,
+            audio_ticks: 0,
+            rendering_mode,
+            pixel_format,
+            frame_buffer: ArrayFrameBuffer::new([XRGB8888::new_with_raw_value(0); FRAME_BUFFER_LENGTH])
         })
       }
 }
@@ -136,6 +136,28 @@ impl<'a> retro::SaveStateCore<'a> for LynxCore {
                 Ok(())
             }
         }        
+    }
+}
+
+impl<'a> retro::GetMemoryRegionCore<'a> for LynxCore {
+    fn get_memory_size(&self, _env: &mut impl env::GetMemorySize, id: MemoryType) -> usize {
+        let mem_type = StandardMemoryType::try_from(id).unwrap_or(StandardMemoryType::RTC);
+        match mem_type {
+            StandardMemoryType::RTC => 0,
+            StandardMemoryType::SaveRam => 0,
+            StandardMemoryType::SystemRam => self.lynx.ram_size(),
+            StandardMemoryType::VideoRam => 0,
+        }
+    }
+
+    fn get_memory_data(&self, _env: &mut impl env::GetMemoryData, id: MemoryType) -> Option<&mut [u8]> {
+        let mem_type = StandardMemoryType::try_from(id).unwrap_or(StandardMemoryType::RTC);
+        match mem_type {
+            StandardMemoryType::RTC => None,
+            StandardMemoryType::SaveRam => None,
+            StandardMemoryType::SystemRam => Some(unsafe { self.lynx.ram_data().as_mut_slice() }),
+            StandardMemoryType::VideoRam => None,
+        }
     }
 }
 
