@@ -3,6 +3,7 @@
 
 #### Supported libretro features
 * Save/load states
+* Libretro Cheats
 
 ## Build
 You will need [Rust and its package manager Cargo](https://www.rust-lang.org/). 
