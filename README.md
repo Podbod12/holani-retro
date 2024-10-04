@@ -3,7 +3,7 @@
 
 #### Supported libretro features
 * Save/load states
-* Libretro Cheats
+* [RetroArch cheats](https://docs.libretro.com/guides/cheat-codes/)
 
 ## Build
 You will need [Rust and its package manager Cargo](https://www.rust-lang.org/). 
