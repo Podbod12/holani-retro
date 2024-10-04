@@ -129,7 +129,7 @@ impl<'a> retro::SaveStateCore<'a> for LynxCore {
     }
 
     fn unserialize(&mut self, _env: &mut impl env::Unserialize, data: &[u8]) -> Result<(), CoreError> {
-        match holani::deserialize(data) {
+        match holani::deserialize(data, &self.lynx) {
             Err(_) => Err(CoreError::new()),
             Ok(lynx) => {
                 self.lynx = lynx;
