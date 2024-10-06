@@ -3,11 +3,10 @@ stages:
   
 build-linux-x64:   
   stage: build
-  image: $CI_SERVER_HOST:5050/libretro-steam/rust-build-image:latest
+  image: $CI_SERVER_HOST:5050/libretro-build-rust:latest 
   tags:
     - linux    
   script:
-    - rustup install 1.81.0
     - cargo build --release
     - cp target/release/libholani_retro.so holani_libretro-linux-x86_64.so
   artifacts:
@@ -16,11 +15,10 @@ build-linux-x64:
 
 build-windows-x86_64:   
   stage: build
-  image: $CI_SERVER_HOST:5050/libretro-steam/rust-build-image:cross
+  image: $CI_SERVER_HOST:5050/libretro-build-rust:latest 
   tags:
     - linux
   script:
-    - rustup install 1.81.0
     - cargo build --release --target x86_64-pc-windows-gnu
     - cp target/x86_64-pc-windows-gnu/release/holani_retro.dll holani_libretro-windows-x86_64.dll
   artifacts:
@@ -29,25 +27,10 @@ build-windows-x86_64:
 
 build-osx-x86_64:   
   stage: build
-  image: $CI_SERVER_HOST:5050/libretro-steam/rust-build-image:osx 
-  variables:
-    TOOLCHAIN_VERSION: "darwin21.2"
-    LINKER_FILE: "/osxcross/target/bin/x86_64-apple-${TOOLCHAIN_VERSION}-clang"
-    AR_FILE: "/osxcross/target/bin/x86_64-apple-${TOOLCHAIN_VERSION}-ar"
-    CARGO_TARGET_X86_64_APPLE_DARWIN_LINKER: "${LINKER_FILE}"
-    CARGO_TARGET_X86_64_APPLE_DARWIN_RUSTFLAGS: "-Car=${AR_FILE},-Clink-arg=-undefined,-Clink-arg=dynamic_lookup" 
-    SDK_VERSION: "12.1" 
-    SDK_ARCHIVE: "MacOSX${SDK_VERSION}.sdk.tar.xz"
-    UNATTENDED: "yes"
+  image: $CI_SERVER_HOST:5050/libretro-build-rust-osx:latest  
   tags:
     - linux
   script:
-    - rm -rf /osxcross && git clone --depth 1 https://github.com/tpoechtrager/osxcross /osxcross
-    - wget -nc "https://github.com/joseluisq/macosx-sdks/releases/download/${SDK_VERSION}/${SDK_ARCHIVE}" -O "/osxcross/tarballs/${SDK_ARCHIVE}"
-    - /osxcross/build.sh && rm -rf /osxcross/tarballs/* && chmod +x /osxcross/target/bin/*
-    - rustup install 1.81.0
-    - rustup target add x86_64-apple-darwin && rustup toolchain install stable-x86_64-apple-darwin
-    - apt update && apt install -yq gcc-multilib 
     - cargo build --release --target x86_64-apple-darwin
     - cp target/x86_64-apple-darwin/release/libholani_retro.dylib holani_libretro-osx-x86_64.dylib
   artifacts:
@@ -56,25 +39,10 @@ build-osx-x86_64:
 
 build-osx-aarch64:   
   stage: build
-  image: $CI_SERVER_HOST:5050/libretro-steam/rust-build-image:osx-aarch64
+  image: $CI_SERVER_HOST:5050/libretro-build-rust-osx:latest
   tags:
-    - linux
-  variables:
-    TOOLCHAIN_VERSION: "darwin21.2"
-    LINKER_FILE: "/osxcross/target/bin/arm64-apple-${TOOLCHAIN_VERSION}-clang"
-    AR_FILE: "/osxcross/target/bin/arm64-apple-${TOOLCHAIN_VERSION}-ar"
-    CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER: "${LINKER_FILE}"
-    CARGO_TARGET_AARCH64_APPLE_DARWIN_RUSTFLAGS: "-Car=${AR_FILE},-Clink-arg=-undefined,-Clink-arg=dynamic_lookup"
-    SDK_VERSION: "12.1" 
-    SDK_ARCHIVE: "MacOSX${SDK_VERSION}.sdk.tar.xz"
-    UNATTENDED: "yes"       
+    - linux      
   script:
-    - rm -rf /osxcross && git clone --depth 1 https://github.com/tpoechtrager/osxcross /osxcross
-    - wget -nc "https://github.com/joseluisq/macosx-sdks/releases/download/${SDK_VERSION}/${SDK_ARCHIVE}" -O "/osxcross/tarballs/${SDK_ARCHIVE}"
-    - /osxcross/build.sh && rm -rf /osxcross/tarballs/* && chmod +x /osxcross/target/bin/*    
-    - rustup install 1.81.0
-    - rustup target add aarch64-apple-darwin && rustup toolchain install stable-aarch64-apple-darwin
-    - apt update && apt install -yq clang gcc-multilib
     - cargo build --release --target aarch64-apple-darwin
     - cp target/aarch64-apple-darwin/release/libholani_retro.dylib holani_libretro-osx-aarch64.dylib
   artifacts:
@@ -83,21 +51,11 @@ build-osx-aarch64:
 
 build-linux-android:   
   stage: build
-  image: $CI_SERVER_HOST:5050/libretro-build-android:latest
+  image: $CI_SERVER_HOST:5050/libretro-build-rust-android:latest
   tags:
     - linux
-  variables:
-    NDK_VERSION: "r26"
-    CARGO_NDK_VERSION: "3.5.4"
-  script:
-    - apt update && apt install -yq clang gcc-multilib curl
-    - curl -fL -o /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux.zip
-    - unzip /tmp/android-ndk.zip -d /usr/local/
-    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    - . "$HOME/.cargo/env"  
-    - rustup target add aarch64-linux-android armv7-linux-androideabi
-    - cargo install --version=${CARGO_NDK_VERSION} cargo-ndk
-    - ANDROID_NDK_HOME=/usr/local/android-ndk-${NDK_VERSION} NDK_HOME=/usr/local/android-ndk-${NDK_VERSION} cargo ndk -o ./jniLibs build --release
+  script:   
+    - cargo ndk -o ./jniLibs build --release
     - cp jniLibs/arm64-v8a/libholani_retro.so holani_libretro-android-arm64-v8a.so
     - cp jniLibs/armeabi-v7a/libholani_retro.so holani_libretro-android-armeabi-v7a.so
   artifacts:
