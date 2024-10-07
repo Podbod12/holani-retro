@@ -95,7 +95,9 @@ impl<'a> retro::Core<'a> for LynxCore {
             Err(_) => warn!("Couldn't get libretro system directory"),
         }
 
-        lynx.load_cart_from_slice(&data).unwrap();
+        if lynx.load_cart_from_slice(&data).is_err() {
+            return Err(CoreError::new());
+        }
 
         let rotation = match lynx.rotation() {
             1 => ScreenRotation::TwoSeventyDegrees,
