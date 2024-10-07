@@ -31,5 +31,8 @@ With retroarch you can use the previsouly built core from the command line with:
 retroarch --libretro target/release/libholani_retro.so <cartridge.lnx>
 ```
 
+#### Windows
+[Microsoft Visual C++ 2015 Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=52685) is required.
+
 ## Embedded ROM
 Holani uses the [Free Lynx Boot Rom](http://lynxdev.atari.org). If you encouter issues booting your cartridge try copying the original Lynx firmware *lynxboot.img* into Retroarch's "system" folder.
