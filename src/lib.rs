@@ -47,7 +47,7 @@ impl<'a> retro::Core<'a> for LynxCore {
             self.audio_ticks += 1;
             if self.audio_ticks == TICKS_PER_AUDIO_SAMPLE {
                 let sample = self.lynx.audio_sample();
-                callbacks.upload_audio_sample(sample, sample);
+                callbacks.upload_audio_sample(sample.0, sample.1);
                 self.audio_ticks = 0;                
             }
         }      
