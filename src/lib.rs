@@ -1,7 +1,7 @@
 use std::{collections::HashMap, path::PathBuf};
 use lazy_static::lazy_static;
 use libretro_rs::{ffi::{RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO}, prelude::*};
-use holani::{mikey::video::{LYNX_SCREEN_HEIGHT, LYNX_SCREEN_WIDTH}, suzy::registers::{Joystick, Switches}, Lynx};
+use holani::{cartridge::lnx_header::LNXRotation, mikey::video::{LYNX_SCREEN_HEIGHT, LYNX_SCREEN_WIDTH}, suzy::registers::{Joystick, Switches}, Lynx};
 use ::log::warn;
 
 const CRYSTAL_FREQUENCY: u32 = 16_000_000;
@@ -100,8 +100,8 @@ impl<'a> retro::Core<'a> for LynxCore {
         }
 
         let rotation = match lynx.rotation() {
-            1 => ScreenRotation::TwoSeventyDegrees,
-            2 => ScreenRotation::NinetyDegrees,
+            LNXRotation::_270 => ScreenRotation::TwoSeventyDegrees,
+            LNXRotation::_90 => ScreenRotation::NinetyDegrees,
             _ => ScreenRotation::ZeroDegrees
         };        
         env.set_rotation(rotation).unwrap();
