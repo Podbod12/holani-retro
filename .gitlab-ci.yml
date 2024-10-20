@@ -1,64 +1,84 @@
+.core-defs:
+  variables:
+    CORENAME: holani_retro
+
 stages:          
-  - build
+  - build-shared
   
-build-linux-x64:   
-  stage: build
-  image: $CI_SERVER_HOST:5050/libretro-build-rust:latest 
-  tags:
-    - linux    
+libretro-rust-linux-x86_64:   
+  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust
+  stage: build-shared
   script:
     - cargo build --release
-    - cp target/release/libholani_retro.so holani_libretro-linux-x86_64.so
+  after_script:
+    - mv target/release/lib${CORENAME}.so ${CORENAME}_libretro.so
   artifacts:
     paths:
-    - holani_libretro-linux-x86_64.so
+    - ${CORENAME}_libretro.so
+    expire_in: 10 min
 
-build-windows-x86_64:   
-  stage: build
-  image: $CI_SERVER_HOST:5050/libretro-build-rust:latest 
-  tags:
-    - linux
+libretro-rust-windows-x86_64:
+  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust
+  stage: build-shared
   script:
     - cargo build --release --target x86_64-pc-windows-gnu
-    - cp target/x86_64-pc-windows-gnu/release/holani_retro.dll holani_libretro-windows-x86_64.dll
+  after_script:
+    - mv target/x86_64-pc-windows-gnu/release/${CORENAME}.dll ${CORENAME}.dll
   artifacts:
     paths:
-    - holani_libretro-windows-x86_64.dll
+    - ${CORENAME}.dll
+    expire_in: 10 min
 
-build-osx-x86_64:   
-  stage: build
-  image: $CI_SERVER_HOST:5050/libretro-build-rust-osx:latest  
-  tags:
-    - linux
-  script:
-    - cargo build --release --target x86_64-apple-darwin
-    - cp target/x86_64-apple-darwin/release/libholani_retro.dylib holani_libretro-osx-x86_64.dylib
-  artifacts:
-    paths:
-    - holani_libretro-osx-x86_64.dylib
-
-build-osx-aarch64:   
-  stage: build
-  image: $CI_SERVER_HOST:5050/libretro-build-rust-osx:latest
-  tags:
-    - linux      
+libretro-rust-osx-aarch64:
+  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:osx
+  stage: build-shared
   script:
     - cargo build --release --target aarch64-apple-darwin
-    - cp target/aarch64-apple-darwin/release/libholani_retro.dylib holani_libretro-osx-aarch64.dylib
+  after_script:
+    - mv target/aarch64-apple-darwin/release/lib${CORENAME}.dylib ${CORENAME}_libretro.dylib
   artifacts:
     paths:
-    - holani_libretro-osx-aarch64.dylib
+    - ${CORENAME}_libretro.dylib
+    expire_in: 10 min
 
-build-linux-android:   
-  stage: build
-  image: $CI_SERVER_HOST:5050/libretro-build-rust-android:latest
-  tags:
-    - linux
-  script:   
-    - cargo ndk -o ./jniLibs build --release
-    - cp jniLibs/arm64-v8a/libholani_retro.so holani_libretro-android-arm64-v8a.so
-    - cp jniLibs/armeabi-v7a/libholani_retro.so holani_libretro-android-armeabi-v7a.so
+libretro-rust-osx-x86_64:
+  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:osx
+  stage: build-shared
+  script:
+    - cargo build --release --target x86_64-apple-darwin
+  after_script:
+    - mv target/x86_64-apple-darwin/release/lib${CORENAME}.dylib ${CORENAME}_libretro.dylib
   artifacts:
     paths:
-    - holani_libretro-android-arm64-v8a.so
-    - holani_libretro-android-armeabi-v7a.so
+    - ${CORENAME}_libretro.dylib
+    expire_in: 10 min
+
+libretro-rust-android-jni-armeabi-v7a:
+  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:android
+  stage: build-shared
+  variables:
+    JNI_PATH: ./jniLibs
+    LIBNAME: ${CORENAME}_libretro_android.so
+  script:
+    - cargo ndk -o $JNI_PATH build --release
+    - mv $JNI_PATH/armeabi-v7a/lib${CORENAME}.so $LIBNAME
+  artifacts:
+    name: android-armeabi-v7a
+    paths:
+      - $LIBNAME
+    expire_in: 10 min
+
+.libretro-rust-android-jni-arm64-v8a:
+  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:android
+  stage: build-shared
+  variables:
+    JNI_PATH: ./jniLibs
+    LIBNAME: ${CORENAME}_libretro_android.so
+  script:
+    - cargo ndk -o $JNI_PATH build --release
+    - mv $JNI_PATH/arm64-v8a/lib${CORENAME}.so $LIBNAME
+  artifacts:
+    name: android-arm64-v8a
+    paths:
+      - $LIBNAME
+    expire_in: 10 min
