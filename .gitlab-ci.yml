@@ -1,84 +1,81 @@
+# Core definitions
 .core-defs:
   variables:
     CORENAME: holani_retro
 
-stages:          
+include:
+  ################################## DESKTOPS ################################
+  # Windows 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/rust-windows-x64.yml'
+    
+  # Linux 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/rust-linux-x64.yml'
+
+  # MacOS
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/rust-osx.yml'
+
+  ################################## CELLULAR ################################
+  # Android
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/rust-android-jni.yml'
+
+
+  #################################### MISC ##################################
+  # Stages for building
+stages:
+  - build-prepare
   - build-shared
-  
-libretro-rust-linux-x86_64:   
-  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust
-  stage: build-shared
-  script:
-    - cargo build --release
-  after_script:
-    - mv target/release/lib${CORENAME}.so ${CORENAME}_libretro.so
-  artifacts:
-    paths:
-    - ${CORENAME}_libretro.so
-    expire_in: 10 min
+  - build-static
 
-libretro-rust-windows-x86_64:
-  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust
-  stage: build-shared
-  script:
-    - cargo build --release --target x86_64-pc-windows-gnu
-  after_script:
-    - mv target/x86_64-pc-windows-gnu/release/${CORENAME}.dll ${CORENAME}.dll
-  artifacts:
-    paths:
-    - ${CORENAME}.dll
-    expire_in: 10 min
 
-libretro-rust-osx-aarch64:
-  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:osx
-  stage: build-shared
-  script:
-    - cargo build --release --target aarch64-apple-darwin
-  after_script:
-    - mv target/aarch64-apple-darwin/release/lib${CORENAME}.dylib ${CORENAME}_libretro.dylib
-  artifacts:
-    paths:
-    - ${CORENAME}_libretro.dylib
-    expire_in: 10 min
+##############################################################################
+#################################### STAGES ##################################
+##############################################################################
+#
+################################### DESKTOPS #################################
+# Windows 64-bit
+libretro-build-windows-x64:
+  extends:
+    - .libretro-rust-windows-x64-default
+    - .core-defs
+        
+# Linux 64-bit
+libretro-build-linux-x64:
+  extends:
+    - .libretro-rust-linux-x64-default
+    - .core-defs
 
-libretro-rust-osx-x86_64:
-  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:osx
-  stage: build-shared
-  script:
-    - cargo build --release --target x86_64-apple-darwin
-  after_script:
-    - mv target/x86_64-apple-darwin/release/lib${CORENAME}.dylib ${CORENAME}_libretro.dylib
-  artifacts:
-    paths:
-    - ${CORENAME}_libretro.dylib
-    expire_in: 10 min
-
-libretro-rust-android-jni-armeabi-v7a:
-  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:android
-  stage: build-shared
-  variables:
-    JNI_PATH: ./jniLibs
-    LIBNAME: ${CORENAME}_libretro_android.so
-  script:
-    - cargo ndk -o $JNI_PATH build --release
-    - mv $JNI_PATH/armeabi-v7a/lib${CORENAME}.so $LIBNAME
-  artifacts:
-    name: android-armeabi-v7a
-    paths:
-      - $LIBNAME
-    expire_in: 10 min
-
-.libretro-rust-android-jni-arm64-v8a:
-  image: $CI_SERVER_HOST:5050/libretro-infrastructure/libretro-build-rust:android
-  stage: build-shared
-  variables:
-    JNI_PATH: ./jniLibs
-    LIBNAME: ${CORENAME}_libretro_android.so
-  script:
-    - cargo ndk -o $JNI_PATH build --release
-    - mv $JNI_PATH/arm64-v8a/lib${CORENAME}.so $LIBNAME
-  artifacts:
-    name: android-arm64-v8a
-    paths:
-      - $LIBNAME
-    expire_in: 10 min
+# MacOS 64-bit
+libretro-build-osx-x64:
+  extends:
+    - .libretro-rust-osx-x86_64-default
+    - .core-defs
+# MacOS ARM 64-bit
+libretro-build-osx-arm64:
+  extends:
+    - .libretro-rust-osx-aarch64-default
+    - .core-defs
+################################### CELLULAR #################################
+# Android ARMv7a
+android-armeabi-v7a:
+  extends:
+    - .libretro-rust-android-jni-armeabi-v7a
+    - .core-defs
+# Android ARMv8a
+android-arm64-v8a:
+  extends:
+    - .libretro-rust-android-jni-arm64-v8a
+    - .core-defs
+# Android 64-bit x86
+android-x86_64:
+  extends:
+    - .libretro-rust-android-jni-x86_64
+    - .core-defs
+# Android 32-bit x86
+android-x86:
+  extends:
+    - .libretro-rust-android-jni-x86
+    - .core-defs
