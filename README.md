@@ -28,7 +28,7 @@ With retroarch you can use the previsouly built core from the command line with:
 
 #### Linux
 ```
-retroarch --libretro target/release/libholani.so <cartridge.lnx>
+retroarch --libretro target/release/libholani_retro.so <cartridge.lnx>
 ```
 
 #### Windows
