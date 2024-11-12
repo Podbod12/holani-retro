@@ -25,7 +25,7 @@ impl<'a> retro::Core<'a> for LynxCore {
 
     fn get_system_info() -> SystemInfo {
         SystemInfo::new( //TODO
-            c_utf8!("holani-retro"), 
+            c_utf8!("holani"), 
             c_utf8!(env!("CARGO_PKG_VERSION")), 
             Extensions::new(c_utf8!("lnx|o")) 
         )

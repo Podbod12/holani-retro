@@ -1,7 +1,7 @@
 # Core definitions
 .core-defs:
   variables:
-    CORENAME: holani_retro
+    CORENAME: holani
 
 include:
   ################################## DESKTOPS ################################
