@@ -56,7 +56,7 @@ libretro-build-osx-x64:
 # MacOS ARM 64-bit
 libretro-build-osx-arm64:
   extends:
-    - .libretro-rust-osx-aarch64-default
+    - .libretro-rust-osx-arm64-default
     - .core-defs
 ################################### CELLULAR #################################
 # Android ARMv7a
