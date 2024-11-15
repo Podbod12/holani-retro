@@ -21,7 +21,10 @@ include:
   # Android
   - project: 'libretro-infrastructure/ci-templates'
     file: '/rust-android-jni.yml'
-
+    
+  # iOS
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/rust-ios.yml'
 
   #################################### MISC ##################################
   # Stages for building
@@ -35,6 +38,7 @@ stages:
 #################################### STAGES ##################################
 ##############################################################################
 #
+
 ################################### DESKTOPS #################################
 # Windows 64-bit
 libretro-build-windows-x64:
@@ -58,6 +62,7 @@ libretro-build-osx-arm64:
   extends:
     - .libretro-rust-osx-aarch64-default
     - .core-defs
+
 ################################### CELLULAR #################################
 # Android ARMv7a
 android-armeabi-v7a:
@@ -78,4 +83,10 @@ android-x86_64:
 android-x86:
   extends:
     - .libretro-rust-android-jni-x86
+    - .core-defs
+
+# iOS
+libretro-build-ios-arm64:
+  extends:
+    - .libretro-rust-ios-arm64-default
     - .core-defs
