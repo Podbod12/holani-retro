@@ -18,11 +18,11 @@ jobs:
       - name: Build Base
         run: cargo build --release  
       - name: Transform filenames
-        run: mv target/release/libholani_retro.so holani_libretro-x86_64-linux.so
+        run: mv target/release/libholani.so holani_libretro-x86_64-linux.so
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: holani_retro-x86_64-linux
+          name: holani-x86_64-linux
           path: holani_libretro-x86_64-linux.so
           retention-days: 5
   build-windows:
@@ -35,11 +35,11 @@ jobs:
       - name: Build Base
         run: cargo build --release     
       - name: Transform filenames
-        run: mv target/release/holani_retro.dll holani_libretro-x86_64-windows.dll
+        run: mv target/release/holani.dll holani_libretro-x86_64-windows.dll
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: holani_retro-x86_64-windows
+          name: holani-x86_64-windows
           path: holani_libretro-x86_64-windows.dll
           retention-days: 5
   build-osx-x86_64:
@@ -60,11 +60,11 @@ jobs:
       - name: Build Base x86_64
         run: cargo build --release --target x86_64-apple-darwin
       - name: Transform filenames
-        run: mv target/x86_64-apple-darwin/release/libholani_retro.dylib holani_libretro-x86_64-osx.dylib      
+        run: mv target/x86_64-apple-darwin/release/libholani.dylib holani_libretro-x86_64-osx.dylib      
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: holani_retro-x86_64-osx
+          name: holani-x86_64-osx
           path: holani_libretro-x86_64-osx.dylib
           retention-days: 5 
   build-osx-aarch64:
@@ -81,11 +81,11 @@ jobs:
       - name: Build Base aarch64
         run: cargo build --release  
       - name: Transform filenames
-        run: mv target/release/libholani_retro.dylib holani_libretro-aarch64-osx.dylib      
+        run: mv target/release/libholani.dylib holani_libretro-aarch64-osx.dylib      
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: holani_retro-aarch64-osx
+          name: holani-aarch64-osx
           path: holani_libretro-aarch64-osx.dylib
           retention-days: 5           
 
@@ -112,8 +112,8 @@ jobs:
         run: cargo ndk -o ./jniLibs build --release
       - name: Transform filenames
         run: |
-          mv ./jniLibs/arm64-v8a/libholani_retro.so holani_libretro-arm64-v8a-android.so
-          mv ./jniLibs/armeabi-v7a/libholani_retro.so holani_libretro-armeabi-v7a-android.so      
+          mv ./jniLibs/arm64-v8a/libholani.so holani_libretro-arm64-v8a-android.so
+          mv ./jniLibs/armeabi-v7a/libholani.so holani_libretro-armeabi-v7a-android.so      
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -137,9 +137,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            holani_retro-x86_64-linux/holani_libretro-x86_64-linux.so
-            holani_retro-x86_64-windows/holani_libretro-x86_64-windows.dll
-            holani_retro-x86_64-osx/holani_libretro-x86_64-osx.dylib
-            holani_retro-aarch64-osx/holani_libretro-aarch64-osx.dylib
+            holani-x86_64-linux/holani_libretro-x86_64-linux.so
+            holani-x86_64-windows/holani_libretro-x86_64-windows.dll
+            holani-x86_64-osx/holani_libretro-x86_64-osx.dylib
+            holani-aarch64-osx/holani_libretro-aarch64-osx.dylib
             holani_libretro-android/holani_libretro-arm64-v8a-android.so
             holani_libretro-android/holani_libretro-armeabi-v7a-android.so
