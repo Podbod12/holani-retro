@@ -4,7 +4,6 @@
     CORENAME: holani
 
 include:
-  ################################## DESKTOPS ################################
   # Windows 64-bit
   - project: 'libretro-infrastructure/ci-templates'
     file: '/rust-windows-x64.yml'
@@ -13,33 +12,19 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/rust-linux-x64.yml'
 
-  # MacOS
+  # macOS/iOS/tvOS
   - project: 'libretro-infrastructure/ci-templates'
-    file: '/rust-osx.yml'
-
-  ################################## CELLULAR ################################
+    file: '/rust-apple.yml'
+    
   # Android
   - project: 'libretro-infrastructure/ci-templates'
     file: '/rust-android-jni.yml'
-    
-  # iOS
-  - project: 'libretro-infrastructure/ci-templates'
-    file: '/rust-ios.yml'
 
-  #################################### MISC ##################################
-  # Stages for building
 stages:
   - build-prepare
   - build-shared
   - build-static
 
-
-##############################################################################
-#################################### STAGES ##################################
-##############################################################################
-#
-
-################################### DESKTOPS #################################
 # Windows 64-bit
 libretro-build-windows-x64:
   extends:
@@ -63,7 +48,6 @@ libretro-build-osx-arm64:
     - .libretro-rust-osx-arm64-default
     - .core-defs
 
-################################### CELLULAR #################################
 # Android ARMv7a
 android-armeabi-v7a:
   extends:
@@ -89,4 +73,10 @@ android-x86:
 libretro-build-ios-arm64:
   extends:
     - .libretro-rust-ios-arm64-default
+    - .core-defs
+
+# tvOS
+libretro-build-tvos-arm64:
+  extends:
+    - .libretro-rust-tvos-arm64-default
     - .core-defs
