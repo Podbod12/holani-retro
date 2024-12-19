@@ -1,7 +1,7 @@
 use std::{collections::HashMap, path::PathBuf};
 use lazy_static::lazy_static;
 use libretro_rs::{ffi::{RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO}, prelude::*};
-use holani::{cartridge::lnx_header::LNXRotation, mikey::video::{LYNX_SCREEN_HEIGHT, LYNX_SCREEN_WIDTH}, suzy::registers::{Joystick, Switches}, Lynx};
+use holani::{cartridge::lnx_header::LNXRotation, mikey::video::{LYNX_SCREEN_HEIGHT, LYNX_SCREEN_WIDTH}, suzy::registers::{Joystick, Switches}, lynx::Lynx};
 use ::log::warn;
 
 const CRYSTAL_FREQUENCY: u32 = 16_000_000;
