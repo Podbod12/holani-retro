@@ -212,9 +212,9 @@ dependencies = [
 
 [[package]]
 name = "env_logger"
-version = "0.11.5"
+version = "0.11.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e13fa619b91fb2381732789fc5de83b45675e882f66623b7d8cb4f643017018d"
+checksum = "dcaee3d8e3cfc3fd92428d477bc97fc29ec8716d180c0d74c643bb26166660e0"
 dependencies = [
  "anstream",
  "anstyle",
@@ -288,7 +288,7 @@ dependencies = [
 [[package]]
 name = "holani"
 version = "0.9.6"
-source = "git+https://github.com/LLeny/holani.git?tag=0.9.6#2a9d4c9d43cda4c2dfe1760fde96b8b968a84f07"
+source = "git+https://github.com/LLeny/holani.git?tag=0.9.6-1#3fe5b72b4c3bcf0c97c8e979cfbea6bcb8430a93"
 dependencies = [
  "bitflags 2.6.0",
  "env_logger",
@@ -303,7 +303,7 @@ dependencies = [
 
 [[package]]
 name = "holani-retro"
-version = "0.9.6"
+version = "0.9.6-1"
 dependencies = [
  "holani",
  "lazy_static",

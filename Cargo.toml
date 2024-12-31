@@ -1,10 +1,11 @@
 [package]
 name = "holani-retro"
-version = "0.9.6"
+version = "0.9.6-1"
 edition = "2021"
+rust-version = "1.82"
 
 [dependencies]
-holani = { git = "https://github.com/LLeny/holani.git", tag = "0.9.6" }
+holani = { git = "https://github.com/LLeny/holani.git", tag = "0.9.6-1" }
 log = { version = "0.4", features = [
   "max_level_trace",
   "release_max_level_warn",
@@ -15,3 +16,7 @@ lazy_static = "1.5.0"
 [lib]
 name = "holani"
 crate-type = ["cdylib"]
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
