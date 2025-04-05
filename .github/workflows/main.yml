@@ -1,0 +1,33 @@
+
+name: holani libretro Linux aarch64
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # run at 2 AM UTC
+  watch: # this is a hack that lets repo owners trigger a build by starring
+    types: [started]
+    if: github.actor == github.event.repository.owner.login
+
+jobs:
+  Linux:
+    name: Build for Linux
+    runs-on: ubuntu-22.04-arm
+
+    steps:
+    - name: Install needed packages
+      run: sudo apt update && sudo apt install wget git build-essential make
+    - name: Checkout source
+      run: git clone https://github.com/LLeny/holani-retro.git && cd holani-retro && git submodule update --init
+    - name: Build libretro core
+      working-directory: holani-retro
+      run: |
+        make -j8
+        wget https://raw.githubusercontent.com/libretro/libretro-super/master/retrolink.sh && chmod +x retrolink.sh && ./retrolink.sh holani_pod_libretro.so
+       - zip -9 ../mednafen_pce_libretro.so.zip mednafen_pce_libretro.so
+    - name: Create new release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: Linux_aarch64
+        file: holani_pod_libretro.so
+        overwrite: true
