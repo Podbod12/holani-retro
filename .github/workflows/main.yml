@@ -2,8 +2,9 @@ name: holani libretro Linux aarch64
 
 on:
   push:
-    tags:
-      - "*"
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   watch: # this is a hack that lets repo owners trigger a build by starring
     types: [started]
     if: github.actor == github.event.repository.owner.login
