@@ -18,7 +18,6 @@ jobs:
     - name: Install needed packages
       run: sudo apt update && sudo apt install wget git build-essential make
     - name: Build libretro core
-      working-directory: holani-retro
       run: |
         make -j8
         wget https://raw.githubusercontent.com/libretro/libretro-super/master/retrolink.sh && chmod +x retrolink.sh && ./retrolink.sh holani_pod_libretro.so
