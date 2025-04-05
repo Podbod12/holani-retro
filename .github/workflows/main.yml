@@ -15,8 +15,6 @@ jobs:
     steps:
     - name: Install needed packages
       run: sudo apt update && sudo apt install wget git build-essential make
-    - name: Checkout source
-    -  run: git clone https://github.com/LLeny/holani-retro.git && cd holani-retro && git submodule update --init
     - name: Build libretro core
       working-directory: holani-retro
       run: |
