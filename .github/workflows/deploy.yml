@@ -7,7 +7,7 @@ jobs:
   build-linux:
     name: Build Linux
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     steps:
       - name: Check architecture
         run: |
@@ -18,116 +18,19 @@ jobs:
       - name: Build Base
         run: cargo build --release  
       - name: Transform filenames
-        run: mv target/release/libholani.so holani_libretro-x86_64-linux.so
+        run: mv target/release/libholani.so holani_libretro-aarch64-linux.so
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: holani-x86_64-linux
-          path: holani_libretro-x86_64-linux.so
+          name: holani-aarch64-linux
+          path: holani_libretro-aarch64-linux.so
           retention-days: 5
-  build-windows:
-    name: Build Windows
-    timeout-minutes: 30
-    runs-on: windows-latest
-    steps:
-      - name: Checkout code from repository
-        uses: actions/checkout@v4
-      - name: Build Base
-        run: cargo build --release     
-      - name: Transform filenames
-        run: mv target/release/holani.dll holani_libretro-x86_64-windows.dll
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: holani-x86_64-windows
-          path: holani_libretro-x86_64-windows.dll
-          retention-days: 5
-  build-osx-x86_64:
-    name: Build osx x64_64
-    timeout-minutes: 30
-    runs-on: macos-14
-    steps:
-      - name: Check architecture
-        run: |
-          uname -a
-          find $(rustc --print sysroot) -name 'libstd-*.rlib' | sed -ne 's:^.*/\([^/]*\)/lib/libstd-[^/]*.rlib:\1:p'
-      - name: Checkout code from repository
-        uses: actions/checkout@v4
-      - name: Install x86_64 target
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          target: x86_64-apple-darwin
-      - name: Build Base x86_64
-        run: cargo build --release --target x86_64-apple-darwin
-      - name: Transform filenames
-        run: mv target/x86_64-apple-darwin/release/libholani.dylib holani_libretro-x86_64-osx.dylib      
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: holani-x86_64-osx
-          path: holani_libretro-x86_64-osx.dylib
-          retention-days: 5 
-  build-osx-aarch64:
-    name: Build osx aarch64
-    timeout-minutes: 30
-    runs-on: macos-14
-    steps:
-      - name: Check architecture
-        run: |
-          uname -a
-          find $(rustc --print sysroot) -name 'libstd-*.rlib' | sed -ne 's:^.*/\([^/]*\)/lib/libstd-[^/]*.rlib:\1:p'
-      - name: Checkout code from repository
-        uses: actions/checkout@v4
-      - name: Build Base aarch64
-        run: cargo build --release  
-      - name: Transform filenames
-        run: mv target/release/libholani.dylib holani_libretro-aarch64-osx.dylib      
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: holani-aarch64-osx
-          path: holani_libretro-aarch64-osx.dylib
-          retention-days: 5           
-
-  build-android:
-    name: Build Android
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check architecture
-        run: |
-          uname -a
-          find $(rustc --print sysroot) -name 'libstd-*.rlib' | sed -ne 's:^.*/\([^/]*\)/lib/libstd-[^/]*.rlib:\1:p'
-      - name: Checkout code from repository
-        uses: actions/checkout@v4
-      - name: Install android targets
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          target: aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
-      - name: Install cargo-ndk
-        run: cargo install cargo-ndk
-      - name: Install gcc-multilib
-        run: sudo apt install -y gcc-multilib
-      - name: Build Base 
-        run: cargo ndk -o ./jniLibs build --release
-      - name: Transform filenames
-        run: |
-          mv ./jniLibs/arm64-v8a/libholani.so holani_libretro-arm64-v8a-android.so
-          mv ./jniLibs/armeabi-v7a/libholani.so holani_libretro-armeabi-v7a-android.so      
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: holani_libretro-android
-          path: |
-            holani_libretro-arm64-v8a-android.so 
-            holani_libretro-armeabi-v7a-android.so       
-          retention-days: 5 
           
   release:
     name: Release
-    needs: [build-linux, build-windows, build-osx-x86_64, build-osx-aarch64, build-android]
+    needs: [build-linux]
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     permissions:
       contents: write
     steps:
@@ -137,9 +40,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            holani-x86_64-linux/holani_libretro-x86_64-linux.so
-            holani-x86_64-windows/holani_libretro-x86_64-windows.dll
-            holani-x86_64-osx/holani_libretro-x86_64-osx.dylib
-            holani-aarch64-osx/holani_libretro-aarch64-osx.dylib
-            holani_libretro-android/holani_libretro-arm64-v8a-android.so
-            holani_libretro-android/holani_libretro-armeabi-v7a-android.so
+            holani-aarch64-linux/holani_libretro-aarch64-linux.so
