@@ -10,7 +10,7 @@ include:
 
 stages:
   - build-prepare
-  - build-shared
+  - build-shared 
   - build-static
 
 # Linux 64-bit
