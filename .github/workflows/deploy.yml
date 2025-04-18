@@ -39,5 +39,6 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
+          tag: Linux_aarch64
           files: |
             holani-aarch64-linux/holani_libretro-aarch64-linux.so
