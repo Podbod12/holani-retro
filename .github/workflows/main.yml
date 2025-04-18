@@ -12,8 +12,8 @@ on:
 jobs:
   Linux:
     name: Build for Linux
-    runs-on: ubuntu-19.10-arm
-
+    runs-on: ubuntu-22.04-arm
+    
     steps:
     - name: Install needed packages
       run: sudo apt update && sudo apt install wget git build-essential make
