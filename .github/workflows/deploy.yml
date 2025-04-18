@@ -19,6 +19,8 @@ jobs:
         run: cargo build --release  
       - name: Transform filenames
         run: mv target/release/libholani.so holani_libretro-aarch64-linux.so
+      - name: Strip libc
+        run: glibc-downgrade 2.30 holani_libretro-aarch64-linux.so
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
