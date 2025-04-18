@@ -30,7 +30,7 @@ jobs:
     name: Release
     needs: [build-linux]
     timeout-minutes: 10
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-19.10-arm
     permissions:
       contents: write
     steps:
