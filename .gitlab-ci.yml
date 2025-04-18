@@ -6,7 +6,7 @@
 include:
   # Linux 64-bit
   - project: 'libretro-infrastructure/ci-templates'
-    file: '/rust-linux-aarch64.yml'
+    file: '/rust-linux-aarch64.yml' 
 
 stages:
   - build-prepare
