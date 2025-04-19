@@ -20,7 +20,7 @@ jobs:
       - name: Transform filenames
         run: mv target/release/libholani.so holani_libretro-aarch64-linux.so
       - name: Strip libc
-        run: https://github.com/droidian/glibc-downgrade/blob/droidian/glibc-downgrade 2.30 holani_libretro-aarch64-linux.so
+        run: https://raw.githubusercontent.com/droidian/glibc-downgrade/refs/heads/droidian/glibc-downgrade 2.30 holani_libretro-aarch64-linux.so
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
